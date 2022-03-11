@@ -1,6 +1,10 @@
 //const express = require("express"); "type":commocjs in package json
 import express from "express"; //"type":module in package json
 import { MongoClient } from "mongodb";
+import dotenv from "dotenv";
+import { movieRouter } from "./routes/Movies.js";
+
+dotenv.config();
 const app = express();
 const PORT = 4000;
 const movies = [
@@ -73,24 +77,18 @@ const movies = [
     trailer: "https://www.youtube.com/embed/NgsQ8mVkN8w",
   },
 ];
-const MONGODB_URL = "mongodb://localhost";
+
+const MONGODB_URL = process.env.MONGODB_URL;
 async function createConnection() {
   const clinet = new MongoClient(MONGODB_URL);
   await clinet.connect();
   console.log("mongo connected");
   return clinet;
 }
-const clinet = await createConnection();
+export const clinet = await createConnection();
+app.use(express.json()); // middleware apply function → Intercept all
 app.get("/", function (request, response) {
   response.send("Hello World 🌎🦅");
 });
-app.get("/movies", function (request, response) {
-  response.send(movies);
-});
-app.get("/movies/:id", async function (request, response) {
-  const { id } = request.params;
-  console.log(id);
-  //let movie = await clinet();
-  response.send(movies.filter((data) => data.id === id));
-});
+app.use("/movies", movieRouter);
 app.listen(PORT, () => console.log(`server is running in port :${PORT}`));
