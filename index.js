@@ -3,7 +3,9 @@ import express from "express"; //"type":module in package json
 import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
 import { movieRouter } from "./routes/Movies.js";
+import { userRouter } from "./routes/users.js";
 import cors from "cors";
+import { genPassword } from "./genPassword.js";
 
 dotenv.config();
 const app = express();
@@ -94,4 +96,5 @@ app.get("/", function (request, response) {
   response.send("Hello World 🌎🦅");
 });
 app.use("/movies", movieRouter);
+app.use("/users", userRouter);
 app.listen(PORT, () => console.log(`server is running in port :${PORT}`));
